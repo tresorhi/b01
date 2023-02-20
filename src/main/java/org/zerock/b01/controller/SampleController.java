@@ -50,7 +50,7 @@ public class SampleController {
         log.info("ex/ex2.................");
 
         List<String> strList = IntStream.range(1, 10)
-                .mapToObj(i -> "Data"+i)
+                .mapToObj(i -> "Data" + i)
                 .collect(Collectors.toList());
 
         model.addAttribute("list", strList);
@@ -68,5 +68,10 @@ public class SampleController {
         sampleDTO.p3 = "Value -- p3";
 
         model.addAttribute("dto", sampleDTO);
+    }
+
+    @GetMapping("/ex/ex3")
+    public void ex3(Model model) {
+        model.addAttribute("arr", new String[]{"AAA", "BBB", "CCC"});
     }
 }
