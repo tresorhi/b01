@@ -8,6 +8,7 @@ import org.zerock.b01.domain.Board;
 import org.zerock.b01.dto.BoardDTO;
 import org.zerock.b01.repository.BoardRepository;
 
+import javax.swing.text.html.Option;
 import javax.transaction.Transactional;
 import java.util.Optional;
 
@@ -38,5 +39,21 @@ public class BoardServiceImpl implements BoardService {
         BoardDTO boardDTO = modelMapper.map(board, BoardDTO.class);
 
         return boardDTO;
+    }
+
+    @Override
+    public void modify(BoardDTO boardDTO) {
+        Optional<Board> result = boardRepository.findById(boardDTO.getBno());
+
+        Board board = result.orElseThrow();
+
+        board.change(boardDTO.getTitle(), boardDTO.getContent());
+
+        boardRepository.save(board);
+    }
+
+    @Override
+    public void remove(Long bno) {
+        boardRepository.deleteById(bno);
     }
 }
