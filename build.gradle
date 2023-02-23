@@ -1,14 +1,17 @@
+
 buildscript {
     ext {
         queryDslVersion = "5.0.0"
     }
 }
 
+
+
+
 plugins {
+    id 'org.springframework.boot' version '2.7.3'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
-    id 'org.springframework.boot' version '2.7.8'
-    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
-    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 }
 
 group = 'org.zerock'
@@ -34,46 +37,42 @@ dependencies {
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation'org.springframework.boot:spring-boot-starter-validation'
 
-    testCompileOnly('org.projectlombok:lombok')
-    testAnnotationProcessor('org.projectlombok:lombok')
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 
-    implementation('nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.1.0')
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.1.0'
 
-    implementation('org.modelmapper:modelmapper:3.1.0')
-
-    //Querydsl 관련
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
-    implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 
-    //swagger 관련
+    annotationProcessor(
+
+            "javax.persistence:javax.persistence-api",
+
+            "javax.annotation:javax.annotation-api",
+
+            "com.querydsl:querydsl-apt:${queryDslVersion}:jpa")
+
+
+    implementation 'org.modelmapper:modelmapper:3.1.0'
+
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.1.0'
+
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
     implementation('io.springfox:springfox-boot-starter:3.0.0')
     implementation('io.springfox:springfox-swagger-ui:3.0.0')
+
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
 
-def querydslDir = "$buildDir/generated/querydsl"
-// JPA 사용 여부와 사용할 경로를 설정
-querydsl {
-    jpa = true
-    querydslSourcesDir = querydslDir
-}
-// build 시 사용할 sourceSet 추가
 sourceSets {
-    main.java.srcDir querydslDir
-}
-// querydsl 컴파일시 사용할 옵션 설정
-compileQuerydsl{
-    options.annotationProcessorPath = configurations.querydsl
-}
-// querydsl 이 compileClassPath 를 상속하도록 설정
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
+    main {
+        java {
+            srcDirs = ["$projectDir/src/main/java", "$projectDir/build/generated"]
+        }
     }
-    querydsl.extendsFrom compileClasspath
 }
